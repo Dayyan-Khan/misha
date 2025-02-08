@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misha</title>
+    <style>
+        body {
+            text-align: center;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.8em;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+            color: #fff5f8;
+            font-weight: 600;
+        }
+        .slideshow-container {
+            position: relative;
+            width: 80vw;
+            height: 60vh;
+            margin: auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.4);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slides {
+            display: none;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+            position: absolute;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        .active {
+            display: block;
+            opacity: 1;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        .controls {
+            margin-top: 15px;
+        }
+        button {
+            margin: 5px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            color: white;
+            font-size: 1em;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #ff5c72, #ff4f7b);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Misha</h1>
+    <input type="file" id="fileInput" accept="image/*,video/mp4" multiple>
+    <div class="slideshow-container" id="slideshow"></div>
+    <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+    <button class="next" onclick="plusSlides(1)">&#10095;</button>
+    
+    <div class="controls">
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="rotate()">Rotate</button>
+        <button onclick="removeImage()">Remove</button>
+    </div>
+    
+    <script>
+        let slideIndex = 0;
+        let slides = [];
+        const fileInput = document.getElementById("fileInput");
+        const slideshow = document.getElementById("slideshow");
+
+        fileInput.addEventListener("change", function(event) {
+            const files = event.target.files;
+            for (let file of files) {
+                const url = URL.createObjectURL(file);
+                let mediaElement;
+                if (file.type.startsWith("image")) {
+                    mediaElement = document.createElement("img");
+                } else if (file.type.startsWith("video")) {
+                    mediaElement = document.createElement("video");
+                    mediaElement.controls = true;
+                }
+                mediaElement.src = url;
+                mediaElement.classList.add("slides");
+                mediaElement.style.transform = "scale(1) rotate(0deg)";
+                slideshow.appendChild(mediaElement);
+                slides.push(mediaElement);
+            }
+            showSlides(slideIndex);
+        });
+
+        function showSlides(n) {
+            if (slides.length === 0) return;
+            slides.forEach(slide => slide.style.display = "none");
+            slideIndex = (n + slides.length) % slides.length;
+            slides[slideIndex].style.display = "block";
+        }
+        function plusSlides(n) {
+            showSlides(slideIndex + n);
+        }
+        function zoomIn() {
+            if (slides.length > 0) {
+                slides[slideIndex].style.transform += "scale(1.2)";
+            }
+        }
+        function zoomOut() {
+            if (slides.length > 0) {
+                slides[slideIndex].style.transform += "scale(0.8)";
+            }
+        }
+        function rotate() {
+            if (slides.length > 0) {
+                let currentTransform = slides[slideIndex].style.transform;
+                let rotation = parseInt(currentTransform.match(/rotate\((\d+)deg\)/)?.[1] || 0);
+                slides[slideIndex].style.transform = `scale(1) rotate(${rotation + 90}deg)`;
+            }
+        }
+        function removeImage() {
+            if (slides.length > 0) {
+                slideshow.removeChild(slides[slideIndex]);
+                slides.splice(slideIndex, 1);
+                slideIndex = Math.max(slideIndex - 1, 0);
+                showSlides(slideIndex);
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
